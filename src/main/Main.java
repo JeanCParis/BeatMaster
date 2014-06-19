@@ -2,9 +2,8 @@ package main;
 
 public class Main {
 
-	public static void main(String[] args) {
-		Game game = new Game();
-		game.start();
+	public static void main(final String[] args) {
+		final Game game = new Game();
 	}
 
 }
