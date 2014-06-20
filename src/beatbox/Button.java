@@ -1,5 +1,6 @@
 package beatbox;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,15 +9,17 @@ import main.Game;
 public abstract class Button {
 	
 	protected int xPosition, yPosition;
+	protected File soundFile;
 
 	protected boolean isHit = false;
 	protected boolean wasHit = false;
 	
 	protected List<Pulse> pulses = new ArrayList<Pulse>();
 	
-	public Button(final int xPosition, final int yPosition) {
+	public Button(final int xPosition, final int yPosition, File soundFile) {
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
+		this.soundFile = soundFile;
 	}
 	
 	public int getxPosition() {
@@ -25,6 +28,10 @@ public abstract class Button {
 
 	public int getyPosition() {
 		return yPosition;
+	}
+	
+	public File getSoundFile() {
+		return soundFile;
 	}
 	
 	public void hit() {}

@@ -1,7 +1,5 @@
-/main
-/start
-/view
-/beatbox
-/animation
-/ActionListeners
 /actionlisteners
+/animation
+/beatbox
+/main
+/view

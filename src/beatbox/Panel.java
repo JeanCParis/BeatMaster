@@ -17,16 +17,12 @@ public class Panel {
 		return pressButtons;
 	}
 	
-	public ClickButton addClickButton(final int xPosition, final int yPosition)
-	{
-		final ClickButton button = new ClickButton(xPosition, yPosition);
+	public ClickButton addClickButton(final ClickButton button) {
 		clickButtons.add(button);
 		return button;
 	}
 	
-	public PressButton addPressButton(final int xPosition, final int yPosition)
-	{
-		final PressButton button = new PressButton(xPosition, yPosition);
+	public PressButton addPressButton(final PressButton button) {
 		pressButtons.add(button);
 		return button;
 	}

@@ -1,9 +1,11 @@
 package main;
 
+import java.io.File;
+
 import javax.swing.ImageIcon;
 
 import view.GameView;
-import beatbox.Panel;
+import beatbox.*;
 
 public class Game {
 	
@@ -23,7 +25,24 @@ public class Game {
 	}
 	
 	public void init() {
-		view.addClickButton(panel.addClickButton(0, 0));
-		view.addPressButton(panel.addPressButton(50, 0));
+		
+		File soundFile = new File("sounds/beat");
+		
+		ClickButton cButton = new ClickButton(0, 0, soundFile);
+		PressButton pButton = new PressButton(50, 0, soundFile);
+		view.addClickButton(panel.addClickButton(cButton));
+		view.addPressButton(panel.addPressButton(pButton));
+	}
+	
+	public void ButtonClicked(Button button) {
+		
+	}
+	
+	public void ButtonPressed(Button button) {
+		
+	}
+	
+	public void ButtonReleased(Button button) {
+		
 	}
 }
