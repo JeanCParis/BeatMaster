@@ -10,15 +10,17 @@ public abstract class Button {
 	
 	protected int xPosition, yPosition;
 	protected File soundFile;
+	protected String signature;
 
 	protected boolean isHit = false;
 	protected boolean wasHit = false;
 	
 	protected List<Pulse> pulses = new ArrayList<Pulse>();
 	
-	public Button(final int xPosition, final int yPosition, File soundFile) {
+	public Button(final int xPosition, final int yPosition, final String signature, final File soundFile) {
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
+		this.signature = signature;
 		this.soundFile = soundFile;
 	}
 	

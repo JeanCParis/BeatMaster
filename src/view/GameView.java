@@ -1,7 +1,6 @@
 package view;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -41,20 +40,20 @@ public class GameView extends JFrame {
 	}
 	
 	public void addClickButton(final ClickButton button) {
-		final JButton jbutton = new JButton();
-		jbutton.setIcon(buttonIcon);
-		jbutton.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
-		jbutton.addMouseListener(new ClickButtonListener(button));
-		beatboxPanel.add(jbutton);
+		final ButtonView buttonView = new ButtonView();
+		buttonView.setIcon(buttonIcon);
+		buttonView.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
+		buttonView.addMouseListener(new ClickButtonListener(game, button, buttonView));
+		beatboxPanel.add(buttonView);
 		beatboxPanel.repaint();
 	}
 	
 	public void addPressButton(final PressButton button) {
-		final JButton jbutton = new JButton();
-		jbutton.setIcon(buttonIcon);
-		jbutton.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
-		jbutton.addMouseListener(new PressButtonListener(button));
-		beatboxPanel.add(jbutton);
+		final ButtonView buttonView = new ButtonView();
+		buttonView.setIcon(buttonIcon);
+		buttonView.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
+		buttonView.addMouseListener(new PressButtonListener(game, button, buttonView));
+		beatboxPanel.add(buttonView);
 		beatboxPanel.repaint();
 	}
 }
