@@ -3,17 +3,17 @@ package actionlisteners;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import main.Game;
 import view.ButtonView;
+import beatbox.Beatbox;
 import beatbox.Button;
 
 public abstract class ButtonListener implements MouseListener {
-	Game game;
+	Beatbox beatbox;
 	Button button;
 	ButtonView buttonView;
 	
-	public ButtonListener(final Game game, final Button button, final ButtonView buttonView) {
-		this.game = game;
+	public ButtonListener(final Beatbox beatbox, final Button button, final ButtonView buttonView) {
+		this.beatbox = beatbox;
 		this.button = button;
 		this.buttonView = buttonView;
 	}

@@ -1,57 +1,51 @@
 package main;
 
 import java.io.File;
-
-import javax.swing.ImageIcon;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import view.GameView;
-import beatbox.Button;
-import beatbox.ClickButton;
-import beatbox.Metronome;
-import beatbox.Mixer;
-import beatbox.Panel;
-import beatbox.PressButton;
+import beatbox.Beatbox;
 
 public class Game {
 	
 	public static final int PULSE_SPEED = 1;
-	public static final int PULSE_MAX_POSITION = 1;
+	public static final int PULSE_MAX_VALUE = 1;
 	public static final int BUTTON_SIZE = 40;
+	public static final long MICROSECONDS_PER_SECOND = 1000000000l;
 	
+	protected long allowedInputTimeDifference;
+			
 	protected GameView view;
 	
-	protected final Metronome metronome = new Metronome();
-	protected final Panel panel = new Panel();
-	protected final Mixer mixer = new Mixer();
-	
+	protected final Beatbox beatbox;
+
 	public Game() {
-		view = new GameView(this);
-		view.setButtonImage(new ImageIcon("images/button.png"));
+		beatbox = new Beatbox();
+		view = new GameView(beatbox);
 		
-		metronome.addTickListener(mixer);
-		
-		init();
+		initialize();
 	}
 	
-	public void init() {
+	private void initialize() {
+		beatbox.initialize();
 		
-		final File soundFile = new File("sounds/beat.wav");	
+		/*Demo*/
 		
-		final ClickButton cButton = new ClickButton(0, 0, "cb1", soundFile);
-		final PressButton pButton = new PressButton(50, 0, "pb1", soundFile);
-		view.addClickButton(panel.addClickButton(cButton));
-		view.addPressButton(panel.addPressButton(pButton));
+		final File ohohooh = new File("sounds/ohohooh.wav");
+		view.addClickButton(beatbox.addClickButton(0, 0, "cb1", ohohooh));
+		
+		HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
+		TreeSet<String> sigs = new TreeSet<String>();
+		sigs.add("cb1");
+		map.put(1, sigs);
+		map.put(11, sigs);
+		map.put(21, sigs);
+		beatbox.setScore(map);
 	}
 	
-	public void ButtonClicked(final Button button) {
-		
-	}
-	
-	public void ButtonPressed(final Button button) {
-		
-	}
-	
-	public void ButtonReleased(final Button button) {
-		
+	public void start() {
+		beatbox.start();
 	}
 }

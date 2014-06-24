@@ -1,29 +1,16 @@
 package beatbox;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Panel {
 	
-	protected ArrayList<ClickButton> clickButtons = new ArrayList<ClickButton>();
-	protected ArrayList<PressButton> pressButtons = new ArrayList<PressButton>();
-		
-	public ArrayList<ClickButton> getClickButtons()
-	{
-		return clickButtons;
-	}
+	protected Map<String, Button> buttons = new HashMap<String, Button>();
 	
-	public ArrayList<PressButton> getPressButtons()
-	{
-		return pressButtons;
+	public Button getButton(final String signature) {
+		return buttons.get(signature);
 	}
-	
-	public ClickButton addClickButton(final ClickButton button) {
-		clickButtons.add(button);
-		return button;
-	}
-	
-	public PressButton addPressButton(final PressButton button) {
-		pressButtons.add(button);
-		return button;
+	public void addButton(final Button button) {
+		buttons.put(button.getSignature(), button);
 	}
 }

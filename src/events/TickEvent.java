@@ -1,4 +1,4 @@
-package beatbox;
+package events;
 
 import java.util.EventObject;
 

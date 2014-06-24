@@ -8,6 +8,9 @@ public class ButtonView extends JButton {
 	static protected ImageIcon buttonIconHit;
 	static protected ImageIcon buttonIconLit;
 	
+	public ButtonView() {
+	}
+	
 	public static void setButtonIcon(final ImageIcon buttonIcon) {
 		ButtonView.buttonIcon = buttonIcon;
 	}

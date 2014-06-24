@@ -1,22 +1,59 @@
 package beatbox;
 
-public class Pulse {
+import java.util.ArrayList;
+import java.util.List;
+
+import events.PulseEndEvent;
+import events.UpdateEvent;
+import actionlisteners.PulseEndListener;
+import actionlisteners.UpdateListener;
+import main.Game;
+
+public class Pulse implements UpdateListener {
 	protected Button button;
-	protected int currentPosition = 0;
-	protected int speed;
-	protected int maxPosition;
+	protected long currentValue = 0;
+	protected long speed;
+	protected long maxValue;
 	
-	public Pulse(final Button button, final int speed, final int maxPosition) {
+	protected List<PulseEndListener> pulseEndListeners = new ArrayList<PulseEndListener>();
+
+	public Pulse(final Button button, final int speed, final int maxValue) {
 		this.button = button;
 		this.speed = speed;
-		this.maxPosition = maxPosition;
+		this.maxValue = maxValue;
 	}
 	
-	public void Update(final float elapsedTime) {
-		currentPosition += speed * elapsedTime;
+	public Button getButton() {
+		return button;
+	}
+	
+	public synchronized void addPulseEndedListener(final PulseEndListener listener) {
+		pulseEndListeners.add(listener);
+    }
+    
+    public synchronized void removePulseEndedListener(final PulseEndListener listener) {
+    	pulseEndListeners.remove(listener);
+    }
+	
+	public float getCurrentFactor() {
+		return currentValue/maxValue;
+	}
+
+	@Override
+	public void metronomeUpdated(final UpdateEvent e) {
+		//System.out.println("pulse " + currentValue);
+		currentValue += speed * e.getElapsedTime();
 		
-		if (currentPosition >= maxPosition) {
-			//trigger event
+		if (currentValue >= maxValue * Game.MICROSECONDS_PER_SECOND) {
+			//e.getMetronome().removeUpdateListener(this);
+			firePulseEndedEvent();
 		}
+	}
+	
+	protected void firePulseEndedEvent() {
+		final PulseEndEvent event = new PulseEndEvent(this);
+	   	for(final PulseEndListener listener : pulseEndListeners) {
+	   		listener.pulseEnd(event);
+	   	}
 	}
 }
