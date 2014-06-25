@@ -5,18 +5,21 @@ import java.util.Map;
 import java.util.Set;
 
 import main.Game;
-import events.PulseEndEvent;
-import events.PulseStartEvent;
-import events.TickEvent;
+import view.BeatboxView;
 import actionlisteners.PulseEndListener;
 import actionlisteners.PulseStartListener;
 import actionlisteners.TickListener;
+import events.PulseEndEvent;
+import events.PulseStartEvent;
+import events.TickEvent;
 
 public class Beatbox implements TickListener, PulseStartListener, PulseEndListener {
 	protected Mixer mixer = new Mixer();
 	protected Panel panel = new Panel();
 	protected Metronome metronome = new Metronome();
 	protected Score score = new Score();
+	
+	protected BeatboxView view;
 	
 	public void initialize() {
 		mixer.setTickSound(new File("sounds/tick.wav"));
@@ -31,20 +34,20 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		score.addScoreListener(this);
 	}
 	
-	public ClickButton addClickButton(int xPosition, int yPosition, String signature, File soundFile) {
+	public ClickButton addClickButton(final int xPosition, final int yPosition, final String signature, final File soundFile) {
 		final ClickButton button = new ClickButton(0, 0, signature, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
 	
-	public PressButton addPressButton(int xPosition, int yPosition, String signature, File soundFile) {
+	public PressButton addPressButton(final int xPosition, final int yPosition, final String signature, final File soundFile) {
 		final PressButton button = new PressButton(0, 0, signature, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
 	
-	public void setScore(Map<Integer, Set<String>> scoreMap) {
-		for(Integer key : scoreMap.keySet()) {
+	public void setScore(final Map<Integer, Set<String>> scoreMap) {
+		for(final Integer key : scoreMap.keySet()) {
 			score.setButtons(key, scoreMap.get(key));
 		}
 	}
@@ -63,19 +66,21 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 	}
 
 	@Override
-	public void pulseStart(PulseStartEvent e) {
+	public void pulseStart(final PulseStartEvent e) {
 		System.out.println("pulseStart");
-		Set<String> buttons = e.getButtonSignatures();
-		for(String signature : buttons) {
-			Button button = panel.getButton(signature);
-			Pulse pulse = new Pulse(button, Game.PULSE_SPEED, Game.PULSE_MAX_VALUE);
+		final Set<String> buttons = e.getButtonSignatures();
+		for(final String signature : buttons) {
+			final Button button = panel.getButton(signature);
+			final Pulse pulse = new Pulse(button, Game.PULSE_NUMBER_OF_TICKS, Game.PULSE_SPEED);
 			pulse.addPulseEndedListener(this);
 			metronome.addUpdateListener(pulse);
+			metronome.addTickListener(pulse);
 		}
 	}
 
 	@Override
-	public void pulseEnd(PulseEndEvent e) {
-		//metronome.removeUpdateListener(e.getPulse());
+	public void pulseEnd(final PulseEndEvent e) {
+		metronome.removeUpdateListener(e.getPulse());
+		metronome.removeTickListener(e.getPulse());
 	}
 }

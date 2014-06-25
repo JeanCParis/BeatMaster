@@ -11,7 +11,7 @@ import beatbox.Beatbox;
 public class Game {
 	
 	public static final int PULSE_SPEED = 1;
-	public static final int PULSE_MAX_VALUE = 1;
+	public static final int PULSE_NUMBER_OF_TICKS = 4;
 	public static final int BUTTON_SIZE = 40;
 	public static final long MICROSECONDS_PER_SECOND = 1000000000l;
 	
@@ -23,7 +23,7 @@ public class Game {
 
 	public Game() {
 		beatbox = new Beatbox();
-		view = new GameView(beatbox);
+		view = new GameView();
 		
 		initialize();
 	}
@@ -36,8 +36,8 @@ public class Game {
 		final File ohohooh = new File("sounds/ohohooh.wav");
 		view.addClickButton(beatbox.addClickButton(0, 0, "cb1", ohohooh));
 		
-		HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
-		TreeSet<String> sigs = new TreeSet<String>();
+		final HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
+		final TreeSet<String> sigs = new TreeSet<String>();
 		sigs.add("cb1");
 		map.put(1, sigs);
 		map.put(11, sigs);

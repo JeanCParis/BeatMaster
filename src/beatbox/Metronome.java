@@ -4,16 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import events.TickEvent;
-import events.UpdateEvent;
+import main.Game;
 import actionlisteners.TickListener;
 import actionlisteners.UpdateListener;
-import main.Game;
+import events.TickEvent;
+import events.UpdateEvent;
 
 public class Metronome {
 	protected MetronomeThread thread;
 	
-	protected long previousTime;
 	protected volatile long  totalTime = 0;
 	protected int totalTicks = 0;
 	protected long timePerTick;
@@ -25,7 +24,7 @@ public class Metronome {
     protected List<TickListener> tickListeners = new ArrayList<TickListener>();
     protected List<UpdateListener> updateListeners = new ArrayList<UpdateListener>();
     
-    public void setMixer(Mixer mixer) {
+    public void setMixer(final Mixer mixer) {
     	this.mixer = mixer;
     }
     
@@ -39,7 +38,7 @@ public class Metronome {
     	updateTimePerTick();
     }
     
-    public void setAllowedTimeDifference(long allowedTimeDifference) {
+    public void setAllowedTimeDifference(final long allowedTimeDifference) {
     	this.allowedTimeDifference = allowedTimeDifference;
     }
     
@@ -56,7 +55,7 @@ public class Metronome {
     	thread.start();
     }
     
-    public void setPaused(boolean paused) {
+    public void setPaused(final boolean paused) {
     	thread.setPaused(paused);
     }
     
@@ -76,7 +75,7 @@ public class Metronome {
     	updateListeners.remove(listener);
     }
 	
-	public boolean playClip(File file, String signature) {
+	public boolean playClip(final File file, final String signature) {
 		boolean succeeded = true;
 		
 		if (totalTime >= timePerTick - allowedTimeDifference) {
@@ -97,12 +96,12 @@ public class Metronome {
 	
    protected void fireTickEvent() {
     	final TickEvent event = new TickEvent(this);
-    	for(final TickListener listener : tickListeners) {
-    		listener.metronomeTicked(event);
+    	for(int i=0 ; i<tickListeners.size() ; ++i) {
+    		tickListeners.get(i).metronomeTicked(event);
     	}
     }
    
-   protected void fireUpdateEvent(long elapsedTime) {
+   protected void fireUpdateEvent(final long elapsedTime) {
 	   	final UpdateEvent event = new UpdateEvent(this, elapsedTime);
 	   	for(final UpdateListener listener : updateListeners) {
 	   		listener.metronomeUpdated(event);
@@ -113,19 +112,17 @@ public class Metronome {
 		protected boolean stopThread = false;
 		protected boolean paused = false;
 		
-		public MetronomeThread() {
-			previousTime = System.nanoTime();
-		}
-		
-		public void setPaused(boolean paused) {
+		public void setPaused(final boolean paused) {
 			this.paused = paused;
 		}
 		
 		@Override
 		public void run() {
+			long previousTime = System.nanoTime();
+			
 			while(!stopThread) {
-				long nanoTime = System.nanoTime();
-				long elapsedTime = nanoTime - previousTime;
+				final long nanoTime = System.nanoTime();
+				final long elapsedTime = nanoTime - previousTime;
 				previousTime = nanoTime;
 				
 				if (!paused) {

@@ -3,24 +3,28 @@ package beatbox;
 import java.util.ArrayList;
 import java.util.List;
 
-import events.PulseEndEvent;
-import events.UpdateEvent;
-import actionlisteners.PulseEndListener;
-import actionlisteners.UpdateListener;
 import main.Game;
+import actionlisteners.PulseEndListener;
+import actionlisteners.TickListener;
+import actionlisteners.UpdateListener;
+import events.PulseEndEvent;
+import events.TickEvent;
+import events.UpdateEvent;
 
-public class Pulse implements UpdateListener {
+public class Pulse implements UpdateListener, TickListener {
 	protected Button button;
 	protected long currentValue = 0;
-	protected long speed;
 	protected long maxValue;
+	protected int ticksLeft;
+	protected long speed;
 	
 	protected List<PulseEndListener> pulseEndListeners = new ArrayList<PulseEndListener>();
 
-	public Pulse(final Button button, final int speed, final int maxValue) {
+	public Pulse(final Button button, final int numberOfTicks, final int speed) {
 		this.button = button;
+		this.maxValue = numberOfTicks * speed * Game.MICROSECONDS_PER_SECOND;
+		this.ticksLeft = numberOfTicks;
 		this.speed = speed;
-		this.maxValue = maxValue;
 	}
 	
 	public Button getButton() {
@@ -41,11 +45,17 @@ public class Pulse implements UpdateListener {
 
 	@Override
 	public void metronomeUpdated(final UpdateEvent e) {
-		//System.out.println("pulse " + currentValue);
 		currentValue += speed * e.getElapsedTime();
 		
-		if (currentValue >= maxValue * Game.MICROSECONDS_PER_SECOND) {
-			//e.getMetronome().removeUpdateListener(this);
+		if (currentValue >= maxValue) {
+			currentValue = maxValue;
+		}
+	}
+
+	@Override
+	public void metronomeTicked(final TickEvent e) {
+		System.out.println("pulse " + ticksLeft);
+		if(--ticksLeft==0) {
 			firePulseEndedEvent();
 		}
 	}
