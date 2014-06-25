@@ -4,14 +4,14 @@ import java.util.EventObject;
 import java.util.Set;
 
 public class PulseStartEvent extends EventObject {
-	protected Set<String> buttonSignatures;
+	protected Set<String> buttonIDs;
 	
-	public PulseStartEvent(final Object source, Set<String> buttonSignatures) {
+	public PulseStartEvent(final Object source, Set<String> buttonIDs) {
 		super(source);
-		this.buttonSignatures = buttonSignatures;
+		this.buttonIDs = buttonIDs;
 	}
 	
-	public Set<String> getButtonSignatures() {
-		return buttonSignatures;
+	public Set<String> getButtonIDs() {
+		return buttonIDs;
 	}
 }

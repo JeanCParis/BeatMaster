@@ -10,15 +10,15 @@ public abstract class Button {
 	
 	protected int xPosition, yPosition;
 	protected File soundFile;
-	protected String signature;
+	protected String id;
 
 	protected boolean isHit = false;
 	protected boolean wasHit = false;
 	
-	public Button(final int xPosition, final int yPosition, final String signature, final File soundFile) {
+	public Button(final int xPosition, final int yPosition, final String id, final File soundFile) {
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
-		this.signature = signature;
+		this.id = id;
 		this.soundFile = soundFile;
 	}
 	
@@ -34,8 +34,8 @@ public abstract class Button {
 		return soundFile;
 	}
 	
-	public String getSignature() {
-		return signature;
+	public String getID() {
+		return id;
 	}
 	
 	public void hit() {};

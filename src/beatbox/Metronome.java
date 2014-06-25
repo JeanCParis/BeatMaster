@@ -75,15 +75,15 @@ public class Metronome {
     	updateListeners.remove(listener);
     }
 	
-	public boolean playClip(final File file, final String signature) {
+	public boolean playClip(final File file, final String id) {
 		boolean succeeded = true;
 		
 		if (totalTime >= timePerTick - allowedTimeDifference) {
-			mixer.addUpcommingClip(file, signature);
+			mixer.addUpcommingClip(file, id);
 			System.out.println("before/on time");
 		}
 		else if (totalTime <= allowedTimeDifference) {
-			mixer.playClip(file, signature, totalTime/1000);
+			mixer.playClip(file, id, totalTime/1000);
 			System.out.println("after time");
 		}
 		else {

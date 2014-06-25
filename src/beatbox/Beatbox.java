@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import main.Game;
-import view.BeatboxView;
 import actionlisteners.PulseEndListener;
 import actionlisteners.PulseStartListener;
 import actionlisteners.TickListener;
@@ -14,15 +13,19 @@ import events.PulseStartEvent;
 import events.TickEvent;
 
 public class Beatbox implements TickListener, PulseStartListener, PulseEndListener {
-	protected Mixer mixer = new Mixer();
+	protected Game game;
+	
+	protected Mixer mixer;
 	protected Panel panel = new Panel();
 	protected Metronome metronome = new Metronome();
 	protected Score score = new Score();
 	
-	protected BeatboxView view;
+	public Beatbox(Game game) {
+		this.game = game;
+		mixer = new Mixer(game);
+	}
 	
 	public void initialize() {
-		mixer.setTickSound(new File("sounds/tick.wav"));
 		
 		metronome.setBPM(120);
 		metronome.setSubdivision(2);
@@ -34,14 +37,14 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		score.addScoreListener(this);
 	}
 	
-	public ClickButton addClickButton(final int xPosition, final int yPosition, final String signature, final File soundFile) {
-		final ClickButton button = new ClickButton(0, 0, signature, soundFile);	
+	public ClickButton addClickButton(final int xPosition, final int yPosition, final String id, final File soundFile) {
+		final ClickButton button = new ClickButton(0, 0, id, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
 	
-	public PressButton addPressButton(final int xPosition, final int yPosition, final String signature, final File soundFile) {
-		final PressButton button = new PressButton(0, 0, signature, soundFile);	
+	public PressButton addPressButton(final int xPosition, final int yPosition, final String id, final File soundFile) {
+		final PressButton button = new PressButton(0, 0, id, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
@@ -56,8 +59,9 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		metronome.start();
 	}
 	
-	public void ButtonClicked(final Button button) {
-		metronome.playClip(button.getSoundFile(), button.getSignature());
+	public boolean buttonClicked(final String id) {
+		Button button = panel.getButton(id);
+		return metronome.playClip(button.getSoundFile(), id);
 	}
 
 	@Override
@@ -68,9 +72,9 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 	@Override
 	public void pulseStart(final PulseStartEvent e) {
 		System.out.println("pulseStart");
-		final Set<String> buttons = e.getButtonSignatures();
-		for(final String signature : buttons) {
-			final Button button = panel.getButton(signature);
+		final Set<String> buttons = e.getButtonIDs();
+		for(final String id : buttons) {
+			final Button button = panel.getButton(id);
 			final Pulse pulse = new Pulse(button, Game.PULSE_NUMBER_OF_TICKS, Game.PULSE_SPEED);
 			pulse.addPulseEndedListener(this);
 			metronome.addUpdateListener(pulse);

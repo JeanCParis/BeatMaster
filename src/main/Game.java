@@ -22,8 +22,8 @@ public class Game {
 	protected final Beatbox beatbox;
 
 	public Game() {
-		beatbox = new Beatbox();
-		view = new GameView();
+		beatbox = new Beatbox(this);
+		view = new GameView(this);
 		
 		initialize();
 	}
@@ -34,7 +34,8 @@ public class Game {
 		/*Demo*/
 		
 		final File ohohooh = new File("sounds/ohohooh.wav");
-		view.addClickButton(beatbox.addClickButton(0, 0, "cb1", ohohooh));
+		beatbox.addClickButton(0, 0, "cb1", ohohooh);
+		view.addClickButton(0, 0, "cb1");
 		
 		final HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
 		final TreeSet<String> sigs = new TreeSet<String>();
@@ -47,5 +48,17 @@ public class Game {
 	
 	public void start() {
 		beatbox.start();
+	}
+	
+	public void buttonClicked(String id) {
+		beatbox.buttonClicked(id);
+	}
+	
+	public void soundStarted(String id) {
+		view.setHit(id);
+	}
+	
+	public void soundEnded(String id) {
+		view.setNormal(id);
 	}
 }

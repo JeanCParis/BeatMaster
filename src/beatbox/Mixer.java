@@ -2,9 +2,8 @@ package beatbox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,24 +11,28 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import main.Game;
 import actionlisteners.LineStoppedListener;
 
 public class Mixer {
+	protected Game game;
+	
 	protected boolean stopThread = false;
 	protected boolean playUpcommingClips = false;
 	
 	protected File ticksoundFile;
 	protected boolean paused = false;
-	protected HashMap<String, Clip> currentClips = new HashMap<String, Clip>();
-	protected HashMap<String, File> upcommingClips = new HashMap<String, File>();
+	protected Map<String, Clip> currentClips = new HashMap<String, Clip>();
+	protected Map<String, File> upcommingClips = new HashMap<String, File>();
 	
-	public void setTickSound(File ticksoundFile) {
-		this.ticksoundFile = ticksoundFile;
+	public Mixer(Game game) {
+		this.game = game;
+		ticksoundFile = new File("sounds/tick.wav");
 	}
 	
-	public synchronized void addUpcommingClip(final File file, final String signature) {
-		if(upcommingClips.get(signature)==null) {
-			upcommingClips.put(signature, file);
+	public synchronized void addUpcommingClip(final File file, final String id) {
+		if(upcommingClips.get(id)==null) {
+			upcommingClips.put(id, file);
 		}
 	}
 	
@@ -42,19 +45,19 @@ public class Mixer {
 		playClip(ticksoundFile, "", 0);
 	}
 	
-	public synchronized void playClip(final File file, final String signature, final long startMicrosecondPosition) {
-			final Clip clip = getClip(file, signature);
+	public synchronized void playClip(final File file, final String id, final long startMicrosecondPosition) {
+			final Clip clip = getClip(file, id);
 	        clip.setMicrosecondPosition(startMicrosecondPosition);
-	        removeClip(signature);
+	        removeClip(id);
 	        clip.start();
-			currentClips.put(signature, clip);
+			currentClips.put(id, clip);
 	}
 	
-	private Clip getClip(File file, String signature) {
+	private Clip getClip(File file, String id) {
 		try {
 			final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
 			final Clip clip = AudioSystem.getClip();
-			clip.addLineListener(new LineStoppedListener(this, audioInputStream));
+			clip.addLineListener(new LineStoppedListener(this, audioInputStream, game, id));
 	        clip.open(audioInputStream);
 	        return clip;
 		} catch (final UnsupportedAudioFileException e){
@@ -69,12 +72,12 @@ public class Mixer {
 		}
 	}
 	
-	public void removeClip(String signature) {
-		Clip clip = currentClips.get(signature);
+	public void removeClip(String id) {
+		Clip clip = currentClips.get(id);
 		if (clip!=null) {
 			clip.stop();
 			clip.close();
-			currentClips.remove(signature);
+			currentClips.remove(id);
 		}
 	}
 	

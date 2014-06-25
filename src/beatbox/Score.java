@@ -20,15 +20,15 @@ public class Score implements TickListener {
 		this.shift = shift;
 	}
 	
-	public void addButton(final int tick, final String signature) {
+	public void addButton(final int tick, final String id) {
 		final Integer key = Integer.valueOf(tick);
-		final Set<String> buttonSignatures = score.get(key);
-		buttonSignatures.add(signature);
-		score.put(key, buttonSignatures);
+		final Set<String> buttonIDs = score.get(key);
+		buttonIDs.add(id);
+		score.put(key, buttonIDs);
 	}
 	
-	public void setButtons(final int tick, final Set<String> signatures) {
-			score.put(Integer.valueOf(tick), signatures);
+	public void setButtons(final int tick, final Set<String> ids) {
+			score.put(Integer.valueOf(tick), ids);
 	}
 	
 	public void addScoreListener(final PulseStartListener listener) {
@@ -43,10 +43,10 @@ public class Score implements TickListener {
 	public void metronomeTicked(TickEvent e) {
 		final Metronome metronome = (Metronome)e.getSource();
 		final int key = metronome.getTotalTicks() + shift;
-		final Set<String> buttonSignatures = score.get(key);
+		final Set<String> buttonIDs = score.get(key);
 		
-		if(buttonSignatures != null) {
-			final PulseStartEvent event = new PulseStartEvent(this, buttonSignatures);
+		if(buttonIDs != null) {
+			final PulseStartEvent event = new PulseStartEvent(this, buttonIDs);
 			for(final PulseStartListener listener : pulseStartListeners) {
 				listener.pulseStart(event);
 			}

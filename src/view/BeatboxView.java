@@ -1,45 +1,56 @@
 package view;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import main.Game;
 import actionlisteners.ClickButtonListener;
 import actionlisteners.PressButtonListener;
-import beatbox.Beatbox;
-import beatbox.ClickButton;
-import beatbox.PressButton;
 
 public class BeatboxView extends JPanel {
-	protected Beatbox beatbox;
+	protected Game game;
 	protected ImageIcon buttonIcon;
 	
-	public BeatboxView(Beatbox beatbox) {
-		this.beatbox = beatbox;
+	final protected Map<String,ButtonView> buttons = new HashMap<String,ButtonView>();
+	
+	public BeatboxView(final Game game) {
+		this.game = game;
 		setBackground(Color.white);
-		buttonIcon = new ImageIcon("images/button.png");
+		
+		ButtonView.setButtonIcon(new ImageIcon("images/button.png"));
+		ButtonView.setButtonIconHit(new ImageIcon("images/buttonHit.png"));
+		ButtonView.setButtonIconLit(new ImageIcon("images/buttonLit.png"));
 	}
 	
-	public void addClickButton(final ClickButton button) {
-		final ButtonView buttonView = new ButtonView();
-		buttonView.setIcon(buttonIcon);
-		buttonView.setBorder(BorderFactory.createEmptyBorder());
-		buttonView.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
-		buttonView.addMouseListener(new ClickButtonListener(beatbox, button, buttonView));
+	public void addClickButton(final int xPosition, final int yPosition, final String id) {
+		final ButtonView buttonView = new ButtonView(xPosition, yPosition);
+		buttonView.addMouseListener(new ClickButtonListener(game, id));
 		add(buttonView);
+		buttons.put(id, buttonView);
 		repaint();
 	}
 	
-	public void addPressButton(final PressButton button) {
-		final ButtonView buttonView = new ButtonView();
-		buttonView.setIcon(buttonIcon);
-		buttonView.setBorder(BorderFactory.createEmptyBorder());
-		buttonView.setBounds(button.getxPosition(), button.getyPosition(), Game.BUTTON_SIZE, Game.BUTTON_SIZE);
-		buttonView.addMouseListener(new PressButtonListener(beatbox, button, buttonView));
+	public void addPressButton(final int xPosition, final int yPosition, final String id) {
+		final ButtonView buttonView = new ButtonView(xPosition, yPosition);
+		buttonView.addMouseListener(new PressButtonListener(game, id));
 		add(buttonView);
+		buttons.put(id, buttonView);
 		repaint();
+	}
+	
+	public void setHit(String id) {
+		buttons.get(id).setHitIcon();
+	}
+	
+	public void setNormal(String id) {
+		buttons.get(id).setNormalIcon();
+	}
+	
+	public ButtonView getButton(final String id) {
+		return buttons.get(id);
 	}
 }

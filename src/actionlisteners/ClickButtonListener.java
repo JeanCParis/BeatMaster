@@ -2,18 +2,16 @@ package actionlisteners;
 
 import java.awt.event.MouseEvent;
 
-import view.ButtonView;
-import beatbox.Beatbox;
-import beatbox.Button;
+import main.Game;
 
 public class ClickButtonListener extends ButtonListener {
 
-	public ClickButtonListener(final Beatbox beatbox, final Button button, final ButtonView buttonView) {
-		super(beatbox, button, buttonView);
+	public ClickButtonListener(final Game game, final String id) {
+		super(game, id);
 	}
 	
     @Override
 	public void mouseClicked(final MouseEvent e) {
-    	beatbox.ButtonClicked(button);
+    	game.buttonClicked(id);
     }
 }
