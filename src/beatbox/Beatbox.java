@@ -4,37 +4,33 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
+import view.BeatboxView;
 import main.Game;
 import actionlisteners.PulseEndListener;
 import actionlisteners.PulseStartListener;
 import actionlisteners.TickListener;
-import events.PulseEndEvent;
-import events.PulseStartEvent;
-import events.TickEvent;
+import actionlisteners.UpdateListener;
 
-public class Beatbox implements TickListener, PulseStartListener, PulseEndListener {
-	protected Game game;
+public class Beatbox {
+	protected BeatboxView view;
 	
 	protected Mixer mixer;
 	protected Panel panel = new Panel();
 	protected Metronome metronome = new Metronome();
 	protected Score score = new Score();
 	
-	public Beatbox(Game game) {
-		this.game = game;
-		mixer = new Mixer(game);
+	public Beatbox() {
+		mixer = new Mixer(this);
 	}
 	
 	public void initialize() {
-		
 		metronome.setBPM(120);
 		metronome.setSubdivision(2);
 		metronome.setAllowedTimeDifference((long)(0.2 * Game.NANOSECONDS_PER_SECOND));
 		metronome.setMixer(mixer);
-		metronome.addTickListener(this);
-		metronome.addTickListener(score);
+		metronome.addTickListener(new TickListener(this));
 		
-		score.addScoreListener(this);
+		score.addScoreListener(new PulseStartListener(this));
 	}
 	
 	public ClickButton addClickButton(final int xPosition, final int yPosition, final String id, final File soundFile) {
@@ -64,31 +60,38 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		return metronome.playClip(button.getSoundFile(), id);
 	}
 
-	@Override
-	public void metronomeTicked(final TickEvent e) {
+	public void metronomeTicked(final int tickValue) {
+		score.metronomeTicked(tickValue);
 		mixer.playUpcommingClips();
 	}
+	
+	public void metronomeUpdated(final long elapsedTime) {
+		panel.metronomeUpdated(elapsedTime);
+	}
 
-	@Override
-	public void pulseStart(final PulseStartEvent e) {
-		System.out.println("pulseStart");
-		final Set<String> buttons = e.getButtonIDs();
-		for(final String id : buttons) {
+	public void pulseStart(final Set<String> buttonIDs) {
+		for(final String id : buttonIDs) {
 			final Button button = panel.getButton(id);
 			final Pulse pulse = new Pulse(button, Game.PULSE_NUMBER_OF_TICKS);
 			button.addPulse(pulse);
-			pulse.addPulseEndedListener(this);
-			metronome.addUpdateListener(pulse);
-			metronome.addTickListener(pulse);
+			pulse.addPulseEndedListener(new PulseEndListener(this));
+			metronome.addUpdateListener(new UpdateListener(this));
+			metronome.addTickListener(new TickListener(this));
 		}
 	}
 
-	@Override
-	public void pulseEnd(final PulseEndEvent e) {
-		Pulse pulse = e.getPulse();
-		metronome.removeUpdateListener(pulse);
-		metronome.removeTickListener(pulse);
-		pulse.getButton().removePulse(pulse);
-		game.pulseEnded(pulse.getButton().getID());
+	public void pulseEnd(final Pulse pulse) {
+		Button button = pulse.getButton();
+		button.removePulse(pulse);
+		view.setNormal(button.getID());
+	}
+	
+	public void soundStarted(String id) {
+		mixer.removeClip(id);
+		view.setHit(id);
+	}
+	
+	public void soundEnded(String id) {
+		view.setNormal(id);
 	}
 }

@@ -42,12 +42,24 @@ public abstract class Button {
 		return pulses;
 	}
 	
-	public void addPulse(Pulse pulse) {
+	public void addPulse(final Pulse pulse) {
 		pulses.add(pulse);
 	}
 	
-	public void removePulse(Pulse pulse) {
+	public void removePulse(final Pulse pulse) {
 		pulses.remove(pulse);
+	}
+	
+	public void metronomeUpdated(final long elapsedTime) {
+		for(Pulse pulse : pulses) {
+			pulse.metronomeUpdated(elapsedTime);
+		}
+	}
+	
+	public void metronomeTicked() {
+		for(Pulse pulse : pulses) {
+			pulse.metronomeTicked();
+		}
 	}
 	
 	public void hit() {};

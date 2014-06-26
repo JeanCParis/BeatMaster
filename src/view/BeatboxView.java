@@ -7,16 +7,16 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import main.Game;
+import beatbox.Beatbox;
 
 public class BeatboxView extends JPanel {
-	protected Game game;
+	protected Beatbox beatbox;
 	protected ImageIcon buttonIcon;
 	
 	final protected Map<String,ButtonView> buttons = new HashMap<String,ButtonView>();
 	
-	public BeatboxView(final Game game) {
-		this.game = game;
+	public BeatboxView(final Beatbox beatbox) {
+		this.beatbox = beatbox;
 		setBackground(Color.white);
 		
 		ButtonView.setButtonIcon(new ImageIcon("images/button.png"));

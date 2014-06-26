@@ -2,12 +2,12 @@ package actionlisteners;
 
 import java.awt.event.MouseEvent;
 
-import main.Game;
+import beatbox.Beatbox;
 
 public class PressButtonListener extends ButtonListener {
 
-	public PressButtonListener(final Game game, final String id) {
-		super(game, id);
+	public PressButtonListener(final Beatbox beatbox, final String id) {
+		super(beatbox, id);
 	}
 	
     @Override

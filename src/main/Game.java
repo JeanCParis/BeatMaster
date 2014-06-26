@@ -20,8 +20,8 @@ public class Game {
 	protected final Beatbox beatbox;
 
 	public Game() {
-		beatbox = new Beatbox(this);
-		view = new GameView(this);
+		beatbox = new Beatbox();
+		view = new GameView(beatbox);
 		
 		initialize();
 	}
@@ -62,21 +62,5 @@ public class Game {
 	public void start() {
 		beatbox.start();
 		view.start();
-	}
-	
-	public boolean buttonClicked(String id) {
-		return beatbox.buttonClicked(id);
-	}
-	
-	public void soundStarted(String id) {
-		view.setHit(id);
-	}
-	
-	public void soundEnded(String id) {
-		view.setNormal(id);
-	}
-	
-	public void pulseEnded(String id) {
-		view.setNormal(id);
 	}
 }

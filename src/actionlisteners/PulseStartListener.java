@@ -2,8 +2,17 @@ package actionlisteners;
 
 import java.util.EventListener;
 
+import beatbox.Beatbox;
 import events.PulseStartEvent;
 
-public interface PulseStartListener extends EventListener {
-	public void pulseStart(PulseStartEvent e);
+public class PulseStartListener implements EventListener {
+	protected Beatbox beatbox;
+	
+	public PulseStartListener(Beatbox beatbox) {
+		this.beatbox = beatbox;
+	}
+	
+	public void pulseStart(PulseStartEvent e) {
+		beatbox.pulseStart(e.getButtonIDs());
+	}
 }

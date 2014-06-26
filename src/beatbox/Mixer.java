@@ -3,6 +3,7 @@ package beatbox;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
@@ -11,11 +12,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import main.Game;
-import actionlisteners.LineStoppedListener;
+import actionlisteners.LineUpdateListener;
 
 public class Mixer {
-	protected Game game;
+	protected Beatbox beatbox;
 	
 	protected boolean stopThread = false;
 	protected boolean playUpcommingClips = false;
@@ -25,8 +25,8 @@ public class Mixer {
 	protected Map<String, Clip> currentClips = new HashMap<String, Clip>();
 	protected Map<String, File> upcommingClips = new HashMap<String, File>();
 	
-	public Mixer(Game game) {
-		this.game = game;
+	public Mixer(Beatbox beatbox) {
+		this.beatbox = beatbox;
 		ticksoundFile = new File("sounds/tick.wav");
 	}
 	
@@ -36,8 +36,10 @@ public class Mixer {
 		}
 	}
 	
-	public void playUpcommingClips() {
-		for(final String key : upcommingClips.keySet()) {
+	public synchronized void playUpcommingClips() {
+		Iterator<String> keys = upcommingClips.keySet().iterator();
+		while(keys.hasNext()) {
+			String key = keys.next();
 			final File file = upcommingClips.get(key);
 			playClip(file, key, 0);
 			upcommingClips.remove(key);
@@ -46,18 +48,19 @@ public class Mixer {
 	}
 	
 	public synchronized void playClip(final File file, final String id, final long startMicrosecondPosition) {
-			final Clip clip = getClip(file, id);
-	        clip.setMicrosecondPosition(startMicrosecondPosition);
-	        removeClip(id);
-	        clip.start();
-			currentClips.put(id, clip);
+			if (currentClips.get(id)==null) {
+				final Clip clip = getClip(file, id);
+		        clip.setMicrosecondPosition(startMicrosecondPosition);
+		        clip.start();
+				currentClips.put(id, clip);
+			}
 	}
 	
 	private Clip getClip(File file, String id) {
 		try {
 			final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
 			final Clip clip = AudioSystem.getClip();
-			clip.addLineListener(new LineStoppedListener(this, audioInputStream, game, id));
+			clip.addLineListener(new LineUpdateListener(this, audioInputStream, beatbox, id));
 	        clip.open(audioInputStream);
 	        return clip;
 		} catch (final UnsupportedAudioFileException e){
@@ -74,11 +77,7 @@ public class Mixer {
 	
 	public void removeClip(String id) {
 		Clip clip = currentClips.get(id);
-		if (clip!=null) {
-			clip.stop();
-			clip.close();
-			currentClips.remove(id);
-		}
+		currentClips.remove(id);
 	}
 	
 	public boolean isPaused() {

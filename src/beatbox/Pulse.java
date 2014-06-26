@@ -11,7 +11,9 @@ import events.PulseEndEvent;
 import events.TickEvent;
 import events.UpdateEvent;
 
-public class Pulse implements UpdateListener, TickListener {
+public class Pulse {
+	protected static long timePerTick;
+	
 	protected Button button;
 	protected long currentValue = 0;
 	protected float currentFactor = 0;
@@ -23,6 +25,10 @@ public class Pulse implements UpdateListener, TickListener {
 		this.button = button;
 		this.numberOfTicks = numberOfTicks;
 		this.ticksLeft = numberOfTicks;
+	}
+	
+	public static void setTimePerTick(final long timePerTick) {
+		Pulse.timePerTick = timePerTick;
 	}
 	
 	public Button getButton() {
@@ -41,14 +47,12 @@ public class Pulse implements UpdateListener, TickListener {
 		return currentFactor;
 	}
 
-	@Override
-	public void metronomeUpdated(final UpdateEvent e) {
-		currentValue += e.getElapsedTime();
-		currentFactor = (float)currentValue/(float)e.getMetronome().getTimePerTick()/numberOfTicks;
+	public void metronomeUpdated(final long elapsedTime) {
+		currentValue += elapsedTime;
+		currentFactor = (float)currentValue/(float)timePerTick/numberOfTicks;
 	}
 
-	@Override
-	public void metronomeTicked(final TickEvent e) {
+	public void metronomeTicked() {
 		if(--ticksLeft==0) {
 			firePulseEndedEvent();
 		}

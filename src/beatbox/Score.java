@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import events.PulseStartEvent;
-import events.TickEvent;
 import actionlisteners.PulseStartListener;
-import actionlisteners.TickListener;
 
-public class Score implements TickListener {
+public class Score {
 	protected HashMap<Integer, Set<String>> score = new HashMap<Integer, Set<String>>();
 	protected int shift = 0;
 	
@@ -39,12 +37,8 @@ public class Score implements TickListener {
     	pulseStartListeners.remove(listener);
     }
 	
-	@Override
-	public void metronomeTicked(TickEvent e) {
-		final Metronome metronome = (Metronome)e.getSource();
-		final int key = metronome.getTotalTicks() + shift;
-		final Set<String> buttonIDs = score.get(key);
-		
+	public void metronomeTicked(int tick) {
+		final Set<String> buttonIDs = score.get(tick);
 		if(buttonIDs != null) {
 			final PulseStartEvent event = new PulseStartEvent(this, buttonIDs);
 			for(final PulseStartListener listener : pulseStartListeners) {

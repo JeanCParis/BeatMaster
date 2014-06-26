@@ -6,15 +6,16 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import events.UpdateViewEvent;
 import main.Game;
+import events.UpdateViewEvent;
 import actionlisteners.ClickButtonListener;
 import actionlisteners.PressButtonListener;
 import actionlisteners.UpdateViewListener;
+import beatbox.Beatbox;
 import beatbox.Button;
 
 public class GameView extends JFrame {
-	protected Game game;
+	protected Beatbox beatbox;
 	protected JPanel menuPanel;
 	protected BeatboxView beatboxPanel;
 	
@@ -22,14 +23,14 @@ public class GameView extends JFrame {
 	
     protected List<UpdateViewListener> updateViewListeners = new ArrayList<UpdateViewListener>();
 	
-	public GameView(Game game) {
+	public GameView(Beatbox beatbox) {
 		this.setTitle("BeatMaster");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(600,400);
 		
-		this.game = game;
+		this.beatbox = beatbox;
 		
-		beatboxPanel = new BeatboxView(game);	
+		beatboxPanel = new BeatboxView(beatbox);	
 		this.add(beatboxPanel);
 		this.setVisible(true);
 	}
@@ -41,14 +42,14 @@ public class GameView extends JFrame {
 	
 	public void addClickButton(final Button button) {
 		ButtonView buttonView = new ButtonView(button);
-		buttonView.addMouseListener(new ClickButtonListener(game, button.getID()));
+		buttonView.addMouseListener(new ClickButtonListener(beatbox, button.getID()));
 		addViewUpdateListener(buttonView);
 		beatboxPanel.addClickButton(buttonView, button.getID());
 	}
 	
 	public void addPressButton(final Button button) {
 		ButtonView buttonView = new ButtonView(button);
-		buttonView.addMouseListener(new PressButtonListener(game, button.getID()));
+		buttonView.addMouseListener(new PressButtonListener(beatbox, button.getID()));
 		addViewUpdateListener(buttonView);
 		beatboxPanel.addPressButton(buttonView, button.getID());
 	}

@@ -44,6 +44,7 @@ public class Metronome {
     
     private void updateTimePerTick() {
     	timePerTick = ((60 * Game.NANOSECONDS_PER_SECOND) / bpm) / subdivision;
+    	Pulse.setTimePerTick(timePerTick);
     }
     
     public long getTimePerTick() {
@@ -99,17 +100,19 @@ public class Metronome {
 	}
 	
    protected void fireTickEvent() {
-    	final TickEvent event = new TickEvent(this);
+    	final TickEvent event = new TickEvent(this, totalTicks);
     	for(int i=0 ; i<tickListeners.size() ; ++i) {
     		tickListeners.get(i).metronomeTicked(event);
+    		//updateListeners.remove(i);--i;
     	}
     }
    
    protected void fireUpdateEvent(final long elapsedTime) {
 	   	final UpdateEvent event = new UpdateEvent(this, elapsedTime);
-	   	for(final UpdateListener listener : updateListeners) {
-	   		listener.metronomeUpdated(event);
-	   	}
+	   	for(int i=0 ; i<updateListeners.size() ; ++i) {
+    		updateListeners.get(i).metronomeUpdated(event);
+    		//updateListeners.remove(i);--i;
+    	}
    }
    
    protected class MetronomeThread extends Thread {
