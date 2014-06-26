@@ -14,17 +14,15 @@ import events.UpdateEvent;
 public class Pulse implements UpdateListener, TickListener {
 	protected Button button;
 	protected long currentValue = 0;
-	protected long maxValue;
-	protected int ticksLeft;
-	protected long speed;
+	protected float currentFactor = 0;
+	protected int numberOfTicks, ticksLeft;
 	
 	protected List<PulseEndListener> pulseEndListeners = new ArrayList<PulseEndListener>();
 
-	public Pulse(final Button button, final int numberOfTicks, final int speed) {
+	public Pulse(final Button button, final int numberOfTicks) {
 		this.button = button;
-		this.maxValue = numberOfTicks * speed * Game.MICROSECONDS_PER_SECOND;
+		this.numberOfTicks = numberOfTicks;
 		this.ticksLeft = numberOfTicks;
-		this.speed = speed;
 	}
 	
 	public Button getButton() {
@@ -40,21 +38,17 @@ public class Pulse implements UpdateListener, TickListener {
     }
 	
 	public float getCurrentFactor() {
-		return currentValue/maxValue;
+		return currentFactor;
 	}
 
 	@Override
 	public void metronomeUpdated(final UpdateEvent e) {
-		currentValue += speed * e.getElapsedTime();
-		
-		if (currentValue >= maxValue) {
-			currentValue = maxValue;
-		}
+		currentValue += e.getElapsedTime();
+		currentFactor = (float)currentValue/(float)e.getMetronome().getTimePerTick()/numberOfTicks;
 	}
 
 	@Override
 	public void metronomeTicked(final TickEvent e) {
-		System.out.println("pulse " + ticksLeft);
 		if(--ticksLeft==0) {
 			firePulseEndedEvent();
 		}

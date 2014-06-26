@@ -12,6 +12,8 @@ public class ClickButtonListener extends ButtonListener {
 	
     @Override
 	public void mouseClicked(final MouseEvent e) {
-    	game.buttonClicked(id);
+    	if (game.buttonClicked(id)) {
+    		//mettre à jour l'icon du bouton
+    	}
     }
 }

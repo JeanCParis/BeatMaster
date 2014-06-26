@@ -8,8 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import main.Game;
-import actionlisteners.ClickButtonListener;
-import actionlisteners.PressButtonListener;
 
 public class BeatboxView extends JPanel {
 	protected Game game;
@@ -26,17 +24,13 @@ public class BeatboxView extends JPanel {
 		ButtonView.setButtonIconLit(new ImageIcon("images/buttonLit.png"));
 	}
 	
-	public void addClickButton(final int xPosition, final int yPosition, final String id) {
-		final ButtonView buttonView = new ButtonView(xPosition, yPosition);
-		buttonView.addMouseListener(new ClickButtonListener(game, id));
+	public void addClickButton(final ButtonView buttonView, final String id) {
 		add(buttonView);
 		buttons.put(id, buttonView);
 		repaint();
 	}
 	
-	public void addPressButton(final int xPosition, final int yPosition, final String id) {
-		final ButtonView buttonView = new ButtonView(xPosition, yPosition);
-		buttonView.addMouseListener(new PressButtonListener(game, id));
+	public void addPressButton(final ButtonView buttonView, final String id) {
 		add(buttonView);
 		buttons.put(id, buttonView);
 		repaint();

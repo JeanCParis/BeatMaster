@@ -1,19 +1,26 @@
 package view;
 
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import events.UpdateViewEvent;
 import main.Game;
-import beatbox.ClickButton;
-import beatbox.PressButton;
+import actionlisteners.ClickButtonListener;
+import actionlisteners.PressButtonListener;
+import actionlisteners.UpdateViewListener;
+import beatbox.Button;
 
 public class GameView extends JFrame {
 	protected Game game;
 	protected JPanel menuPanel;
 	protected BeatboxView beatboxPanel;
 	
-	protected ImageIcon buttonIcon;
+	protected GameViewThread thread;
+	
+    protected List<UpdateViewListener> updateViewListeners = new ArrayList<UpdateViewListener>();
 	
 	public GameView(Game game) {
 		this.setTitle("BeatMaster");
@@ -27,16 +34,23 @@ public class GameView extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void setButtonImage(final ImageIcon image) {
-		buttonIcon = image;
+	public void start() {
+		thread = new GameViewThread(Game.ANIMATION_UPDATES_PER_SECOND);
+		thread.start();
 	}
 	
-	public void addClickButton(final int xPosition, final int yPosition, final String id) {
-		beatboxPanel.addClickButton(xPosition, yPosition, id);
+	public void addClickButton(final Button button) {
+		ButtonView buttonView = new ButtonView(button);
+		buttonView.addMouseListener(new ClickButtonListener(game, button.getID()));
+		addViewUpdateListener(buttonView);
+		beatboxPanel.addClickButton(buttonView, button.getID());
 	}
 	
-	public void addPressButton(final int xPosition, final int yPosition, final String id) {
-		beatboxPanel.addPressButton(xPosition, yPosition, id);
+	public void addPressButton(final Button button) {
+		ButtonView buttonView = new ButtonView(button);
+		buttonView.addMouseListener(new PressButtonListener(game, button.getID()));
+		addViewUpdateListener(buttonView);
+		beatboxPanel.addPressButton(buttonView, button.getID());
 	}
 	
 	public void setHit(String id) {
@@ -47,13 +61,28 @@ public class GameView extends JFrame {
 		beatboxPanel.setNormal(id);
 	}
 	
+	 public void addViewUpdateListener(final UpdateViewListener listener) {
+		 updateViewListeners.add(listener);
+	 }
+	    
+	public void removeViewUpdateListener(final UpdateViewListener listener) {
+	    updateViewListeners.remove(listener);
+	}
+	
+	protected void fireUpdateViewEvent(long elapsedTime) {
+		UpdateViewEvent event = new UpdateViewEvent(this, elapsedTime);
+		for(UpdateViewListener listener : updateViewListeners) {
+			listener.updateView(event);
+		}
+	}
+	
 	protected class GameViewThread extends Thread {
 		protected boolean stopThread = false;
 		protected boolean paused = false;
 		protected long updateTime;
 		
 		public GameViewThread(final int updatesPerSecond) {
-			updateTime = Game.MICROSECONDS_PER_SECOND/updatesPerSecond;	
+			updateTime = Game.NANOSECONDS_PER_SECOND/updatesPerSecond;	
 		}
 		
 		public void setPaused(final boolean paused) {
@@ -75,7 +104,7 @@ public class GameView extends JFrame {
 					
 					if(time>=updateTime) {
 						time -= updateTime;
-						//mettre a jour
+						fireUpdateViewEvent(elapsedTime);
 					}
 				}
 			}

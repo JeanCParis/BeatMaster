@@ -43,7 +43,11 @@ public class Metronome {
     }
     
     private void updateTimePerTick() {
-    	timePerTick = ((60 * Game.MICROSECONDS_PER_SECOND) / bpm) / subdivision;
+    	timePerTick = ((60 * Game.NANOSECONDS_PER_SECOND) / bpm) / subdivision;
+    }
+    
+    public long getTimePerTick() {
+    	return timePerTick;
     }
     
     public int getTotalTicks() {

@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.Game;
-
 public abstract class Button {
 	
 	protected int xPosition, yPosition;
@@ -15,6 +13,8 @@ public abstract class Button {
 	protected boolean isHit = false;
 	protected boolean wasHit = false;
 	
+	protected List<Pulse> pulses = new ArrayList<Pulse>();
+	
 	public Button(final int xPosition, final int yPosition, final String id, final File soundFile) {
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
@@ -22,11 +22,11 @@ public abstract class Button {
 		this.soundFile = soundFile;
 	}
 	
-	public int getxPosition() {
+	public int getXPosition() {
 		return xPosition;
 	}
 
-	public int getyPosition() {
+	public int getYPosition() {
 		return yPosition;
 	}
 	
@@ -36,6 +36,18 @@ public abstract class Button {
 	
 	public String getID() {
 		return id;
+	}
+	
+	public List<Pulse> getPulses() {
+		return pulses;
+	}
+	
+	public void addPulse(Pulse pulse) {
+		pulses.add(pulse);
+	}
+	
+	public void removePulse(Pulse pulse) {
+		pulses.remove(pulse);
 	}
 	
 	public void hit() {};

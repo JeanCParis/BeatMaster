@@ -29,7 +29,7 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		
 		metronome.setBPM(120);
 		metronome.setSubdivision(2);
-		metronome.setAllowedTimeDifference((long)(0.2 * Game.MICROSECONDS_PER_SECOND));
+		metronome.setAllowedTimeDifference((long)(0.2 * Game.NANOSECONDS_PER_SECOND));
 		metronome.setMixer(mixer);
 		metronome.addTickListener(this);
 		metronome.addTickListener(score);
@@ -75,7 +75,8 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 		final Set<String> buttons = e.getButtonIDs();
 		for(final String id : buttons) {
 			final Button button = panel.getButton(id);
-			final Pulse pulse = new Pulse(button, Game.PULSE_NUMBER_OF_TICKS, Game.PULSE_SPEED);
+			final Pulse pulse = new Pulse(button, Game.PULSE_NUMBER_OF_TICKS);
+			button.addPulse(pulse);
 			pulse.addPulseEndedListener(this);
 			metronome.addUpdateListener(pulse);
 			metronome.addTickListener(pulse);
@@ -84,7 +85,10 @@ public class Beatbox implements TickListener, PulseStartListener, PulseEndListen
 
 	@Override
 	public void pulseEnd(final PulseEndEvent e) {
-		metronome.removeUpdateListener(e.getPulse());
-		metronome.removeTickListener(e.getPulse());
+		Pulse pulse = e.getPulse();
+		metronome.removeUpdateListener(pulse);
+		metronome.removeTickListener(pulse);
+		pulse.getButton().removePulse(pulse);
+		game.pulseEnded(pulse.getButton().getID());
 	}
 }
