@@ -2,9 +2,10 @@ package beatbox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -15,6 +16,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import actionlisteners.LineUpdateListener;
 
 public class Mixer {
+	protected volatile boolean busy = false;
+	
 	protected Beatbox beatbox;
 	
 	protected boolean stopThread = false;
@@ -22,8 +25,8 @@ public class Mixer {
 	
 	protected File ticksoundFile;
 	protected boolean paused = false;
-	protected Map<String, Clip> currentClips = new HashMap<String, Clip>();
-	protected Map<String, File> upcommingClips = new HashMap<String, File>();
+	protected Map<String, Clip> currentClips = new TreeMap<String, Clip>();
+	protected Map<String, File> upcommingClips = new ConcurrentHashMap<String, File>();
 	
 	public Mixer(Beatbox beatbox) {
 		this.beatbox = beatbox;
@@ -48,12 +51,18 @@ public class Mixer {
 	}
 	
 	public synchronized void playClip(final File file, final String id, final long startMicrosecondPosition) {
-			if (currentClips.get(id)==null) {
-				final Clip clip = getClip(file, id);
-		        clip.setMicrosecondPosition(startMicrosecondPosition);
-		        clip.start();
-				currentClips.put(id, clip);
+			Clip oldClip = currentClips.get(id);
+			if (oldClip != null){
+				oldClip.stop();
 			}
+			Clip clip = getClip(file, id);
+			while(clip == null) {
+				clip = getClip(file, id);
+			}
+			
+	        clip.setMicrosecondPosition(startMicrosecondPosition);
+	        clip.start();
+			currentClips.put(id, clip);
 	}
 	
 	private Clip getClip(File file, String id) {
@@ -76,8 +85,14 @@ public class Mixer {
 	}
 	
 	public void removeClip(String id) {
-		Clip clip = currentClips.get(id);
 		currentClips.remove(id);
+	}
+	
+	public void stopClip(String id) {
+		Clip clip = currentClips.get(id);
+		if (clip != null){
+			clip.stop();
+		}
 	}
 	
 	public boolean isPaused() {

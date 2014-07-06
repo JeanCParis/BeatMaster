@@ -19,6 +19,8 @@ public class Beatbox {
 	protected Metronome metronome = new Metronome();
 	protected Score score = new Score();
 	
+	protected boolean checked = true;
+	
 	public Beatbox() {
 		mixer = new Mixer(this);
 	}
@@ -33,14 +35,22 @@ public class Beatbox {
 		score.addScoreListener(new PulseStartListener(this));
 	}
 	
+	public boolean isChecked() {
+		return checked;
+	}
+	
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+	
 	public ClickButton addClickButton(final int xPosition, final int yPosition, final String id, final File soundFile) {
-		final ClickButton button = new ClickButton(0, 0, id, soundFile);	
+		final ClickButton button = new ClickButton(xPosition, yPosition, id, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
 	
 	public PressButton addPressButton(final int xPosition, final int yPosition, final String id, final File soundFile) {
-		final PressButton button = new PressButton(0, 0, id, soundFile);	
+		final PressButton button = new PressButton(xPosition, yPosition, id, soundFile);	
 		panel.addButton(button);
 		return button;
 	}
@@ -55,9 +65,23 @@ public class Beatbox {
 		metronome.start();
 	}
 	
+	public void stop() {
+		metronome.start();
+	}
+	
 	public boolean buttonClicked(final String id) {
 		Button button = panel.getButton(id);
-		return metronome.playClip(button.getSoundFile(), id);
+		if(checked) {
+			return metronome.playClip(button.getSoundFile(), id);
+		}
+		else {
+			mixer.playClip(button.getSoundFile(), id, 0);
+			return true;
+		}
+	}
+	
+	public void buttonReleased(final String id) {
+		mixer.stopClip(id);
 	}
 
 	public void metronomeTicked(final int tickValue) {
@@ -87,11 +111,11 @@ public class Beatbox {
 	}
 	
 	public void soundStarted(String id) {
-		mixer.removeClip(id);
 		view.setHit(id);
 	}
 	
 	public void soundEnded(String id) {
+		mixer.removeClip(id);
 		view.setNormal(id);
 	}
 }

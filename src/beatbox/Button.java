@@ -62,7 +62,9 @@ public abstract class Button {
 		}
 	}
 	
-	public void hit() {};
+	public void hit() {
+		
+	};
 	
 	public void press() {};
 	

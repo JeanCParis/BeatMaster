@@ -1,12 +1,21 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
+import main.Action;
+import main.Game;
+import actionlisteners.CheckListener;
+import actionlisteners.MenuListener;
+import actionlisteners.MyKeyListener;
 import beatbox.Beatbox;
 
 public class BeatboxView extends JPanel {
@@ -15,9 +24,19 @@ public class BeatboxView extends JPanel {
 	
 	final protected Map<String,ButtonView> buttons = new HashMap<String,ButtonView>();
 	
-	public BeatboxView(final Beatbox beatbox) {
-		this.beatbox = beatbox;
+	public BeatboxView(final Game game) {
+		this.beatbox = game.getBeatbox();
 		setBackground(Color.white);
+		setLayout(null);
+		
+		JButton check = new JButton();
+		check.setBounds(330, 330, 20, 20);
+		check.setBackground(Color.BLACK);
+		check.addMouseListener(new CheckListener(beatbox));
+		add(check);
+		repaint();
+		
+		addKeyListener(new MyKeyListener(game));
 		
 		ButtonView.setButtonIcon(new ImageIcon("images/button.png"));
 		ButtonView.setButtonIconHit(new ImageIcon("images/buttonHit.png"));

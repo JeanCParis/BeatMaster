@@ -12,9 +12,13 @@ public class PressButtonListener extends ButtonListener {
 	
     @Override
 	public void mouseReleased(final MouseEvent e) {
+    	beatbox.buttonReleased(id);
     }
 
     @Override
-	public void mousePressed(final MouseEvent e) {
+    public void mousePressed (final MouseEvent e) {
+    	if (beatbox.buttonClicked(id)) {
+    		//
+    	}
     }
 }

@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,47 +10,64 @@ import javax.swing.JPanel;
 import main.Game;
 import events.UpdateViewEvent;
 import actionlisteners.ClickButtonListener;
+import actionlisteners.MyKeyListener;
 import actionlisteners.PressButtonListener;
 import actionlisteners.UpdateViewListener;
 import beatbox.Beatbox;
 import beatbox.Button;
 
 public class GameView extends JFrame {
-	protected Beatbox beatbox;
-	protected JPanel menuPanel;
+	protected Game game;
 	protected BeatboxView beatboxPanel;
+	protected MenuView menu;
 	
 	protected GameViewThread thread;
 	
     protected List<UpdateViewListener> updateViewListeners = new ArrayList<UpdateViewListener>();
 	
-	public GameView(Beatbox beatbox) {
+	public GameView(Game game) {
 		this.setTitle("BeatMaster");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(600,400);
+		this.setSize(Game.X_SCREEN_SIZE, Game.Y_SCREEN_SIZE);
+		setLayout(new BorderLayout());
 		
-		this.beatbox = beatbox;
+		this.game = game;
 		
-		beatboxPanel = new BeatboxView(beatbox);	
-		this.add(beatboxPanel);
-		this.setVisible(true);
-	}
-	
-	public void start() {
+		menu = new MenuView(game);
+		beatboxPanel = new BeatboxView(game);	
+		add(menu, BorderLayout.CENTER);
+		setVisible(true);
+		
 		thread = new GameViewThread(Game.ANIMATION_UPDATES_PER_SECOND);
 		thread.start();
 	}
 	
+	public void loadBeatbox() {
+		remove(menu);
+		add(beatboxPanel, BorderLayout.CENTER);
+		setVisible(true);
+		repaint();
+		beatboxPanel.setFocusable(true);
+		beatboxPanel.requestFocusInWindow();
+	}
+	
+	public void loadMenu() {
+		remove(beatboxPanel);
+		add(menu, BorderLayout.CENTER);
+		setVisible(true);
+		repaint();
+	}
+	
 	public void addClickButton(final Button button) {
 		ButtonView buttonView = new ButtonView(button);
-		buttonView.addMouseListener(new ClickButtonListener(beatbox, button.getID()));
+		buttonView.addMouseListener(new ClickButtonListener(game.getBeatbox(), button.getID()));
 		addViewUpdateListener(buttonView);
 		beatboxPanel.addClickButton(buttonView, button.getID());
 	}
 	
 	public void addPressButton(final Button button) {
 		ButtonView buttonView = new ButtonView(button);
-		buttonView.addMouseListener(new PressButtonListener(beatbox, button.getID()));
+		buttonView.addMouseListener(new PressButtonListener(game.getBeatbox(), button.getID()));
 		addViewUpdateListener(buttonView);
 		beatboxPanel.addPressButton(buttonView, button.getID());
 	}

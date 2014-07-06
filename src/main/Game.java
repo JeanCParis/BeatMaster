@@ -14,28 +14,63 @@ public class Game {
 	public static final int BUTTON_SIZE = 100;
 	public static final long NANOSECONDS_PER_SECOND = 1000000000;
 	public static final int ANIMATION_UPDATES_PER_SECOND = 60;
+	public static final int X_SCREEN_SIZE = 400;
+	public static final int Y_SCREEN_SIZE = 400;
 			
 	protected GameView view;
 	
-	protected final Beatbox beatbox;
+	protected Beatbox beatbox;
 
 	public Game() {
-		beatbox = new Beatbox();
-		view = new GameView(beatbox);
 		
-		initialize();
+		view = new GameView(this);
 	}
 	
-	private void initialize() {
+	private void initializeBeatbox() {
+		beatbox = new Beatbox();
 		beatbox.initialize();
 		
-		/*Demo*/
-		
-		final File boum = new File("sounds/boum.wav");
-		final File clap = new File("sounds/clap.wav");
-		
+		final File boum = new File("sounds/boum2.wav");
+		final File clap = new File("sounds/clap2.wav");
+		final File n1 = new File("sounds/n12.wav");
+		final File n2 = new File("sounds/n21.wav");
+		final File ohohooh = new File("sounds/ohohooh.wav");
+				
 		view.addClickButton(beatbox.addClickButton(0, 0, "boum1", boum));
-		view.addClickButton(beatbox.addClickButton(0, 120, "clap1", clap));
+		view.addClickButton(beatbox.addClickButton(0, 100, "n11", n1));
+		view.addClickButton(beatbox.addClickButton(0, 200, "n12", n1));
+		
+		view.addClickButton(beatbox.addClickButton(100, 0, "clap1", clap));
+		view.addClickButton(beatbox.addClickButton(100, 100, "n21", n2));
+		view.addClickButton(beatbox.addClickButton(100, 200, "n22", n2));
+		
+		view.addClickButton(beatbox.addClickButton(200, 0, "ohohooh1", ohohooh));
+		view.addClickButton(beatbox.addClickButton(200, 100, "ohohooh2", ohohooh));
+		view.addPressButton(beatbox.addClickButton(200, 200, "ohohooh3", ohohooh));
+	}
+	
+	private void initializeTrack() {
+		beatbox = new Beatbox();
+		beatbox.initialize();
+		
+		final File boum = new File("sounds/boum2.wav");
+		final File clap = new File("sounds/clap2.wav");
+		final File n1 = new File("sounds/n12.wav");
+		final File n2 = new File("sounds/n21.wav");
+		final File ohohooh = new File("sounds/ohohooh.wav");
+				
+		view.addClickButton(beatbox.addClickButton(0, 0, "boum1", boum));
+		view.addClickButton(beatbox.addClickButton(0, 100, "n11", n1));
+		view.addClickButton(beatbox.addClickButton(0, 200, "n12", n1));
+		
+		view.addClickButton(beatbox.addClickButton(100, 0, "clap1", clap));
+		view.addClickButton(beatbox.addClickButton(100, 100, "n21", n2));
+		view.addClickButton(beatbox.addClickButton(100, 200, "n22", n2));
+		
+		view.addClickButton(beatbox.addClickButton(200, 0, "ohohooh1", ohohooh));
+		view.addClickButton(beatbox.addClickButton(200, 100, "ohohooh2", ohohooh));
+		view.addPressButton(beatbox.addClickButton(200, 200, "ohohooh3", ohohooh));
+		
 		
 		final HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
 		final TreeSet<String> set1 = new TreeSet<String>();
@@ -56,11 +91,27 @@ public class Game {
 		map.put(15, set1);
 		map.put(16, set1);
 		map.put(18, set2);
-		//beatbox.setScore(map);
+		beatbox.setScore(map);
 	}
 	
-	public void start() {
-		beatbox.start();
-		view.start();
+	public Beatbox getBeatbox() {
+		return beatbox;
+	}
+	
+	public void doAction(Action action) {
+		switch(action) {
+		case LAUNCH_BEATBOX :
+			initializeBeatbox();
+			view.loadBeatbox();
+			beatbox.start();
+			break;
+		case LAUNCH_TRACK :
+			
+			break;
+		case LAUNCH_MENU :
+			beatbox.stop();
+			view.loadMenu();
+			break;
+		}
 	}
 }

@@ -10,7 +10,7 @@ public class ClickButtonListener extends ButtonListener {
 	}
 	
     @Override
-	public void mouseClicked(final MouseEvent e) {
+	public void mousePressed (final MouseEvent e) {
     	if (beatbox.buttonClicked(id)) {
     		//mettre à jour l'icon du bouton?>>>non, depend du depqrt du son !
     	}

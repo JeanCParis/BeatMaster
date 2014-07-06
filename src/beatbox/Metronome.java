@@ -13,6 +13,7 @@ import events.UpdateEvent;
 public class Metronome {
 	protected MetronomeThread thread;
 	
+	protected boolean tick = false;
 	protected volatile long  totalTime = 0;
 	protected int totalTicks = 0;
 	protected long timePerTick;
@@ -60,6 +61,10 @@ public class Metronome {
     	thread.start();
     }
     
+    public void stop() {
+    	thread.stopThread = true;
+    }
+    
     public void setPaused(final boolean paused) {
     	thread.setPaused(paused);
     }
@@ -80,7 +85,7 @@ public class Metronome {
     	updateListeners.remove(listener);
     }
 	
-	public boolean playClip(final File file, final String id) {
+	public synchronized boolean playClip(final File file, final String id) {
 		boolean succeeded = true;
 		
 		if (totalTime >= timePerTick - allowedTimeDifference) {
@@ -137,9 +142,16 @@ public class Metronome {
 					totalTime += elapsedTime;
 					
 					if(totalTime >= timePerTick) {
-						totalTime -= timePerTick;
-						++totalTicks;
-						fireTickEvent();
+						if (!tick) {
+							tick = true;
+							++totalTicks;
+							fireTickEvent();
+						}
+						else if(totalTime > timePerTick + allowedTimeDifference) {
+							totalTime -= timePerTick;
+							tick = false;
+							//fireEvent
+						}
 					}
 				}
 			}

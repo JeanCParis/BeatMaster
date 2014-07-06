@@ -8,7 +8,12 @@ import java.util.Set;
 
 public class Panel {
 	
+	protected int nextID=0;
 	protected Map<String, Button> buttons = new HashMap<String, Button>();
+	
+	public int getNextID() {
+		return nextID++;
+	}
 	
 	public Button getButton(final String id) {
 		return buttons.get(id);

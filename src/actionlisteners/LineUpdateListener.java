@@ -24,7 +24,7 @@ public class LineUpdateListener implements LineListener {
 	}
 	
 	@Override
-	public void update(final LineEvent event) {
+	public synchronized void update(final LineEvent event) {
 		if(event.getType() == LineEvent.Type.STOP && !mixer.isPaused()) {
 			Clip clip = (Clip)event.getSource();
 			clip.close();
